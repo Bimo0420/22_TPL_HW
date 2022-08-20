@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace N //Сформировать массив случайных целых чисел (размер  задается пользователем). Вычислить сумму чисел массива и максимальное число в массиве.  Реализовать  решение  задачи  с  использованием  механизма  задач продолжения.
+namespace N //Сформировать массив случайных целых чисел (размер  задается пользователем). Вычислить сумму чисел массива и максимальное число в массиве.  Реализовать  решение  задачи  с  использованием  механизма  задач продолжения. (Поскольку обе задачи (поиск суммы и поиск максимального) могут работать, только получив на вход массив чисел, то обе эти задачи должны быть запущены как продолжение задачи, формирующей массив (task1). Еще бы я совместила методы формирования и вывода на экран массива в один метод.)
 {
     internal class Program
     {
@@ -15,14 +15,13 @@ namespace N //Сформировать массив случайных целы�
             Func<object, int[]> func1 = new Func<object, int[]>(GetArray);
             Task<int[]> task1 = new Task<int[]>(func1, n);
 
-            Func<Task<int[]>, int[]> func2 = new Func<Task<int[]>, int[]>(GetSum);
-            Task<int[]> task2 = task1.ContinueWith<int[]>(func2);
+            Func<Task<int[]>, int> func2 = new Func<Task<int[]>, int>(GetSum);
+            Task<int> task2 = task1.ContinueWith<int>(func2);
 
-            Func<Task<int[]>, int[]> func3 = new Func<Task<int[]>, int[]>(GetMax);
-            Task<int[]> task3 = task2.ContinueWith<int[]>(func2);
+            Func<Task<int[]>, int> func3 = new Func<Task<int[]>, int>(GetMax);
+            Task<int> task3 = task1.ContinueWith<int>(func3);
 
-            Action<Task<int[]>> action = new Action<Task<int[]>>(PrintArray);
-            Task task4 = task3.ContinueWith(action);
+           
 
 
 
@@ -39,12 +38,14 @@ namespace N //Сформировать массив случайных целы�
             for (int i = 0; i < n; i++)
             {
                 array[i] = random.Next(0, 100);
+                Console.Write($"{array[i]} ");
             }
+            Console.WriteLine();
             return array;
         }
         static int GetSum(Task<int[]> task)   //получение суммы
         {
-            
+            int sum = 0;
             int[] array = task.Result;
             for (int i = 0; i < array.Length; i++)
             {
@@ -52,7 +53,8 @@ namespace N //Сформировать массив случайных целы�
                  sum += array[i];
              
             }
-            return array[];
+            Console.WriteLine();
+            return sum;
         }
         static int GetMax(Task<int[]> task)   //получение максимального числа
         {
@@ -71,18 +73,18 @@ namespace N //Сформировать массив случайных целы�
                 }
 
             }
-            
+            Console.WriteLine(array[0]);
             return array[0];
         }
-        static void PrintArray(Task<int[]> task) //вывод на экран
-        {
-            int[] array = task.Result;
-            for (int i = 0; i < array.Count(); i++)
-            {
+        //static void PrintArray(Task<int[]> task) //вывод на экран
+        //{
+        //    int[] array = task.Result;
+        //    for (int i = 0; i < array.Count(); i++)
+        //    {
 
-                Console.Write($"{array[i]} {array[0]}");
-            }
-        }
+        //        Console.Write($"{array[i]} {array[0]}");
+        //    }
+        //}
 
     }
 }
